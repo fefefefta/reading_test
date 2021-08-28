@@ -10,7 +10,8 @@ class Testing:
 		pass
 
 
-	def reading_test(self):
+	def test_process(self):
 		pass
-		#return self.reading_score
+		#return self.final_score - (reading_speed, question_score)
+
 
