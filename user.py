@@ -28,6 +28,8 @@ class User:
 			conn.close()
 			if data:
 				print("Вы вошли.")
+				print(f"Ваша последняя скорость: {data[2]} слов в минуту.")
+				print(f"Результат вашего последнего теста: {data[3]}% правильных ответов.")				
 				self.__name = login
 				self.__secret = password
 				self.__is_accessed = True
@@ -47,25 +49,31 @@ class User:
 		login = input("Придумайте логин: ")
 		password = input("Придумайте пароль: ")
 		conn = sqlite3.connect("readers_db.db")
-		create_query = "CREATE TABLE readers (user_name TEXT, user_password TEXT, last_score INTEGER)"
+		# create_query = "CREATE TABLE readers (user_name TEXT, user_password TEXT, last_speed_score INTEGER, last_comprehension_score INTEGER)"
 		cursor = conn.cursor()
-		cursor.execute(create_query)
+		# cursor.execute(create_query)
 
-		cursor.execute("INSERT INTO readers VALUES (?, ?, ?)", (login, password, 0))
+		cursor.execute("INSERT INTO readers VALUES (?, ?, ?, ?)", (login, password, 0, 0))
 		conn.commit()
 		conn.close()
 		print("Вы зарегистрировались. Теперь авторизуйтесь.")
 
 
 	
-	def push_score(self, score):
-		self.__score = score
+	def push_score(self, scores_tuple):
+		self.__speed_score = scores_tuple[0]
+		self.__comprehension_score = scores_tuple[1]
+
 		conn = sqlite3.connect("readers_db.db")
 		cursor = conn.cursor()
 
-		cursor.execute("UPDATE readers SET last_score=? WHERE user_name=? AND user_password=?", (self.__score, self.__name, self.__secret))
+		cursor.execute("UPDATE readers SET last_speed_score=? WHERE user_name=? AND user_password=?", (self.__speed_score, self.__name, self.__secret))
+		cursor.execute("UPDATE readers SET last_comprehension_score=? WHERE user_name=? AND user_password=?", (self.__comprehension_score, self.__name, self.__secret))
 		conn.commit()
 		conn.close()
+
+		print(f"Вы читаете со скоростью {self.__speed_score} слов в минуту.")
+		print(f"При этом понимание прочитанного текста составляет {self.__comprehension_score}%.")
 
 
 
