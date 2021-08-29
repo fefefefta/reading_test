@@ -14,6 +14,7 @@ class User:
 			self.auth()
 		elif reg_answer.lower() == "выйти":
 			self.__name = None
+			self.__secret = None
 			self.__is_accessed = False
 		elif reg_answer.lower() == "да":
 			conn = sqlite3.connect("readers_db.db")
@@ -28,6 +29,7 @@ class User:
 			if data:
 				print("Вы вошли.")
 				self.__name = login
+				self.__secret = password
 				self.__is_accessed = True
 			else:
 				print("Неверный логин или пароль. Попробуйте еще раз.")
@@ -58,6 +60,13 @@ class User:
 	
 	def push_score(self, score):
 		self.__score = score
+		conn = sqlite3.connect("readers_db.db")
+		cursor = conn.cursor()
+
+		cursor.execute("UPDATE readers SET last_score=? WHERE user_name=? AND user_password=?", (self.__score, self.__name, self.__secret))
+		conn.commit()
+		conn.close()
+
 
 
 	def get_score(self):
