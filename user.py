@@ -1,9 +1,11 @@
 import sqlite3
+import os
 
 
 class User:
 
 	def __init__(self):
+		self.__is_accessed = False
 		self.auth()
 
 
@@ -27,6 +29,7 @@ class User:
 			data = cursor.fetchone()
 			conn.close()
 			if data:
+				os.system('clear')
 				print("Вы вошли.")
 				print(f"Ваша последняя скорость: {data[2]} слов в минуту.")
 				print(f"Результат вашего последнего теста: {data[3]}% правильных ответов.")				
@@ -43,6 +46,11 @@ class User:
 
 	def get_name(self):
 		return self.__name
+
+
+	def get_is_accessed(self):
+		return self.__is_accessed
+
 
 
 	def reg(self):
